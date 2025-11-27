@@ -1,15 +1,22 @@
-import pandas, openpyxl
+import openpyxl
 
 # Simply exports two arrays to an excel sheet for data analysis
-# - Will append to an existing excel file if it exists
-def exportResults(axisX, axisY, name=f"Sheet{len(openpyxl.load_workbook('./out.xlsx').sheetnames)+1}"):
-    a = []
-    for i in range(len(axisX)):
-        a.append(' ')
-    dataToAppend = pandas.DataFrame([axisX, axisY, a], columns=['x', 'y', ' '])
-    with pandas.ExcelFile(path_or_buffer='./out.xlsx') as reader:
-        data = reader.parse(sheet_name=name)
-    with pandas.ExcelWriter(path='./out.xlsx', mode='a', engine='openpyxl', if_sheet_exists="overlay") as writer:
-        pandas.DataFrame(pandas.concat([data, dataToAppend], axis=1)).to_excel(excel_writer=writer, sheet_name=name)
-        writer.close()
+# - Will append to an existing excel file
+def exportResults(axisX: list[float], axisY: list[float], targetSheet: str=""):
+    # Open the excel workbook
+    wb = openpyxl.load_workbook("./out.xlsx")
+    # Default excel sheet name
+    if targetSheet == "": targetSheet = f"Sheet{len(wb.sheetnames)}"
+    # Create a new sheet within the workbook if it doesn't exist already and open said sheet
+    if targetSheet not in wb.sheetnames: wb.create_sheet(targetSheet)
+    ws = wb[targetSheet]
+    # Transpose the data and spacer arrays since we want data in columns but openpyxl works in rows
+    a: list[str] = ["" for i in range(len(axisX))]
+    for i in zip(axisX, axisY, a): ws.append(i)
+    # Save and close
+    wb.save('./out.xlsx')
+    wb.close()
+
+
+
         
