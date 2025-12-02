@@ -28,11 +28,11 @@ class CIFAR10_NN (torch.nn.Module):
         self.flatten = torch.nn.Flatten()
         self.linear_relu_stack = torch.nn.Sequential(
             # This is the neural network's connections. Takes in every pixel's color and uses deep learning to sort it into 10 categories
-            torch.nn.Linear(32*32*3, 512),
+            torch.nn.Linear(32*32*3, 1024),
             torch.nn.ReLU(),
-            torch.nn.Linear(512, 512),
+            torch.nn.Linear(1024, 1024),
             torch.nn.ReLU(),
-            torch.nn.Linear(512, 10)
+            torch.nn.Linear(1024, 10)
         )
 
     def forward(self, x):

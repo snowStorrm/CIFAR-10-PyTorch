@@ -37,5 +37,5 @@ def test(dataloader, model, lossFunc):
             correct += (prediction.argmax(1)==Y).type(torch.float).sum().item()
     testLoss /= batches
     correct /= size
-    print(f"Accuracy: {(100*correct):>0.1f}%")
+    print(f"Accuracy: {(100*correct):>0.1f}%, Loss: {testLoss:>0.3f}")
     return correct*100
