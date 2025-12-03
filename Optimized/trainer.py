@@ -1,25 +1,29 @@
 import cifar10_nn, torch, torchvision
 
-def iterate(dataloader, model, lossFunc, optimizer):
-    #size = len(dataloader.dataset)
+def iterate(dataloader, model: cifar10_nn.CIFAR10_NN, lossFunc, optimizer):
+    size = len(dataloader.dataset)
     model.train()
     # Loop through dataset
-    for batch, (X, Y) in enumerate(dataloader):
+    for batch, (images, categories) in enumerate(dataloader):
         # Load the tensors in batches
         # - Refer to CIFAR10_NN for what these look like
-        X, Y = X.to(model.device), Y.to(model.device)
+        images, categories = images.to(model.device), categories.to(model.device)
         # Predict where the inputs should go
-        prediction = model(X)
-        loss = lossFunc(prediction, Y)
+        prediction = model(images)
+        loss = lossFunc(prediction, categories)
         # Backpropagate to adjust the node weights
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
 
+        # Pick the model's answer
+        loss += loss.item()
+        loss /= size/model.batchSize
+
         # If at end of current batch, print the loss and iteration progress
-        if batch % 100 == 0:
-            loss = loss.item()
-            # print(f"Loss = {loss:>7f} [{current:>5d}/{size:>5d}]")
+        #if batch % 100 == 0:
+            #current = (batch)*len(images)
+            #print(f"Loss = {loss:>7f} [{current:>5d}/{size:>5d}]")
 
 def test(dataloader, model, lossFunc):
     size = len(dataloader.dataset)
@@ -37,5 +41,4 @@ def test(dataloader, model, lossFunc):
             correct += (prediction.argmax(1)==Y).type(torch.float).sum().item()
     testLoss /= batches
     correct /= size
-    print(f"Accuracy: {(100*correct):>0.1f}%, Loss: {testLoss:>0.3f}")
-    return correct*100
+    return correct*100, testLoss

@@ -4,7 +4,8 @@ import openpyxl
 # - Will append to an existing excel file
 def exportResults(axisX: list[float], axisY: list[float], targetSheet: str=""):
     # Open the excel workbook
-    wb = openpyxl.load_workbook("./out.xlsx")
+    try: wb = openpyxl.load_workbook('./out.xlsx')
+    except: wb = openpyxl.Workbook()
     # Default excel sheet name
     if targetSheet == "": targetSheet = f"Sheet{len(wb.sheetnames)}"
     # Create a new sheet within the workbook if it doesn't exist already and open said sheet
